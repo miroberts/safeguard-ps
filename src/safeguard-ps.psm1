@@ -334,14 +334,14 @@ function Submit-RstsMultifactorPost
 
     $local:PasswordPlainText = [System.Net.NetworkCredential]::new("", $Password).Password
     $local:Response = (Invoke-RestMethod -Method POST "https://$Appliance/RSTS/UserLogin/LoginController?response_type=token&redirect_uri=urn%3aInstalledApplication&loginRequestStep=5" `
-        -WebSession $HttpSession -Headers @{ "Accept" = "application/json"; "Content-type" = "application/x-www-form-urlencoded" } -Body @{
+        -WebSession $HttpSession -Headers @{ "Accept" = "application/json"; "Content-type" = "application/x-www-form-urlencoded" } -Body ([System.Text.Encoding]::UTF8.GetBytes(@{
             directoryComboBox = "$PrimaryProviderId";
             usernameTextbox = "$Username";
             passwordTextbox = "$($local:PasswordPlainText)";
             csrfTokenTextbox = "$CsrfToken";
             secondaryAuthenticationStateTextbox = "$SecondaryAuthState";
             secondaryLoginTextbox = "$SecondaryLogin"
-        })
+        })))
 
     $local:Response
 }
@@ -369,12 +369,12 @@ function Submit-RstsMultiFactorCredential
     # MFA preauthenticate
     $local:PasswordPlainText = [System.Net.NetworkCredential]::new("", $Password).Password
     $local:Response = (Invoke-RestMethod -Method POST "https://$Appliance/RSTS/UserLogin/LoginController?response_type=token&redirect_uri=urn%3aInstalledApplication&loginRequestStep=7" `
-        -WebSession $HttpSession -Headers @{ "Accept" = "application/json"; "Content-type" = "application/x-www-form-urlencoded" } -Body @{
+        -WebSession $HttpSession -Headers @{ "Accept" = "application/json"; "Content-type" = "application/x-www-form-urlencoded" } -Body ([System.Text.Encoding]::UTF8.GetBytes(@{
             directoryComboBox = "$PrimaryProviderId";
             usernameTextbox = "$Username";
             passwordTextbox = "$($local:PasswordPlainText)";
             csrfTokenTextbox = "$CsrfToken"
-        })
+        })))
     $local:SecondaryAuthState = $local:Response.State
     $local:Message = $local:Response.Message
     $local:ShouldEcho = $local:Response.Echo
@@ -443,12 +443,12 @@ function Submit-RstsMultiFactorCredential
 
     # Get final response
     $local:Response = (Invoke-RestMethod -Method POST "https://$Appliance/RSTS/UserLogin/LoginController?response_type=token&redirect_uri=urn%3aInstalledApplication&loginRequestStep=6" `
-        -WebSession $HttpSession -Headers @{ "Accept" = "application/json"; "Content-type" = "application/x-www-form-urlencoded" } -Body @{
+        -WebSession $HttpSession -Headers @{ "Accept" = "application/json"; "Content-type" = "application/x-www-form-urlencoded" } -Body ([System.Text.Encoding]::UTF8.GetBytes(@{
             directoryComboBox = "$PrimaryProviderId";
             usernameTextbox = "$Username";
             passwordTextbox = "$($local:PasswordPlainText)";
             csrfTokenTextbox = "$CsrfToken"
-        })
+        })))
 
     $local:Uri = ([Uri]$local:Response.RelyingPartyUrl)
     $local:Fragment = ($local:Uri.Fragment.SubString(1))
@@ -482,12 +482,12 @@ function Submit-RstsPrimaryCredential
 
     $local:PasswordPlainText = [System.Net.NetworkCredential]::new("", $Password).Password
     $local:Response = (Invoke-RestMethod -Method POST "https://$Appliance/RSTS/UserLogin/LoginController?response_type=token&redirect_uri=urn%3aInstalledApplication&loginRequestStep=3" `
-        -WebSession $HttpSession -Headers @{ "Accept" = "application/json"; "Content-type" = "application/x-www-form-urlencoded" } -Body @{
+        -WebSession $HttpSession -Headers @{ "Accept" = "application/json"; "Content-type" = "application/x-www-form-urlencoded" } -Body ([System.Text.Encoding]::UTF8.GetBytes(@{
             directoryComboBox = "$PrimaryProviderId";
             usernameTextbox = "$Username";
             passwordTextbox = "$($local:PasswordPlainText)";
             csrfTokenTextbox = "$CsrfToken"
-        })
+        })))
 
     $local:stsIdentity0 = ((($HttpSession).Cookies).GetCookies("https://$Appliance/RSTS") | Where-Object { $_.Name -eq "stsIdentity0" })[0]
     if (-not $local:stsIdentity0)
